@@ -1,17 +1,17 @@
-import type { Dispatch } from "react";
-import type { RootAction } from "../func/reducer";
+import type { Dispatch } from 'react'
+import type { RootAction } from '../func/reducer'
 
-import { nanoid } from "nanoid";
-import React from "react";
+import { nanoid } from 'nanoid'
+import React from 'react'
 
 type ShapeAdderProps = {
-  dispatch: Dispatch<RootAction>;
-};
+  dispatch: Dispatch<RootAction>
+}
 
 export const ShapeAdder = ({ dispatch }: ShapeAdderProps) => {
   function onAddCircle() {
     dispatch({
-      type: "ADD",
+      type: 'ADD',
       payload: {
         id: nanoid(16),
         radius: 50,
@@ -19,34 +19,32 @@ export const ShapeAdder = ({ dispatch }: ShapeAdderProps) => {
           x: 75,
           y: 75,
         },
-        color: "black",
+        color: 'black',
         isSelected: false,
         isHighlighted: false,
       },
-    });
+    })
   }
 
   function onAddRectangle() {
     dispatch({
-      type: "ADD",
+      type: 'ADD',
       payload: {
         id: nanoid(16),
         height: 100,
         width: 100,
         point: { x: 25, y: 25 },
-        color: "black",
+        color: 'black',
         isSelected: false,
         isHighlighted: false,
       },
-    });
+    })
   }
 
-  // use tuple to future proof adding more shapes
-  // doesn't account for the complexity of verifying a point in other shapes
   const shapes = [
-    ["Circle", onAddCircle],
-    ["Rectangle", onAddRectangle],
-  ] as const;
+    ['Circle', onAddCircle],
+    ['Rectangle', onAddRectangle],
+  ] as const
 
   return (
     <div className="flex flex-col gap-2">
@@ -57,8 +55,8 @@ export const ShapeAdder = ({ dispatch }: ShapeAdderProps) => {
             key={shape}
             onClick={onClick}
           >{`Add ${shape}`}</button>
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
