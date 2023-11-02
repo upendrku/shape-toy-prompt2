@@ -1,55 +1,55 @@
 /* eslint-disable no-case-declarations */
-import type { Point, Shape } from "../shapes";
+import type { Point, Shape } from '../shapes'
 
 type AddAction = {
-  type: "ADD";
-  payload: Shape;
-};
+  type: 'ADD'
+  payload: Shape
+}
 type SelectAction = {
-  type: "SELECT";
-  payload: Shape;
-};
+  type: 'SELECT'
+  payload: Shape
+}
 
 type MoveAction = {
-  type: "MOVE";
+  type: 'MOVE'
   payload: {
-    shape: Shape;
-    point: Point;
-  };
-};
+    shape: Shape
+    point: Point
+  }
+}
 
 type DeleteAction = {
-  type: "DELETE";
-  payload: Shape;
-};
+  type: 'DELETE'
+  payload: Shape
+}
 
 type UpdateAction = {
-  type: "UPDATE";
-  payload: Shape;
-};
+  type: 'UPDATE'
+  payload: Shape
+}
 
 type MultiSelectAction = {
-  type: "MULTI_SELECT";
-  payload: Shape;
-};
+  type: 'MULTI_SELECT'
+  payload: Shape
+}
 
 type DeselectAction = {
-  type: "DESELECT";
-  payload: Shape;
-};
+  type: 'DESELECT'
+  payload: Shape
+}
 
 type DeselectAllAction = {
-  type: "DESELECT_ALL";
-};
+  type: 'DESELECT_ALL'
+}
 
 type HighlightAction = {
-  type: "HIGHLIGHT";
-  payload: Shape;
-};
+  type: 'HIGHLIGHT'
+  payload: Shape
+}
 
 type RemoveHighlightAction = {
-  type: "REMOVE_HIGHLIGHT";
-};
+  type: 'REMOVE_HIGHLIGHT'
+}
 
 export type RootAction =
   | AddAction
@@ -61,18 +61,18 @@ export type RootAction =
   | RemoveHighlightAction
   | MoveAction
   | DeleteAction
-  | UpdateAction;
+  | UpdateAction
 
 export type RootState = {
-  entities: Record<string, Shape>;
-  ids: string[];
-  selected: string[];
-  highlighted: string;
-};
+  entities: Record<string, Shape>
+  ids: string[]
+  selected: string[]
+  highlighted: string
+}
 
 export const reducer = (state: RootState, action: RootAction): RootState => {
   switch (action.type) {
-    case "ADD":
+    case 'ADD':
       return {
         ...state,
         ids: [...state.ids, action.payload.id],
@@ -80,17 +80,17 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
           ...state.entities,
           [action.payload.id]: action.payload,
         },
-      };
-    case "SELECT":
+      }
+    case 'SELECT':
       const entities = state.selected.reduce<Record<string, Shape>>(
         (shapes, id) => {
-          const s = shapes[id];
-          if (!s) return shapes;
+          const s = shapes[id]
+          if (!s) return shapes
 
           return {
             ...shapes,
             [id]: { ...s, isSelected: false },
-          };
+          }
         },
         {
           ...state.entities,
@@ -99,14 +99,14 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
             isSelected: true,
           },
         }
-      );
+      )
 
       return {
         ...state,
         selected: [action.payload.id],
         entities,
-      };
-    case "MULTI_SELECT":
+      }
+    case 'MULTI_SELECT':
       return {
         ...state,
         entities: {
@@ -117,18 +117,17 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
           },
         },
         selected: [...state.selected, action.payload.id],
-      };
-    case "DESELECT":
-      const newSelected = state.selected.filter((s) => action.payload.id !== s);
+      }
+    case 'DESELECT':
+      const newSelected = state.selected.filter((s) => action.payload.id !== s)
 
-      const { highlighted: hilyted, entities: ets } = state;
+      const { highlighted: hilyted, entities: ets } = state
 
       return {
         ...state,
         //@ts-expect-error dynamic key will be there (maybe? needs test) because of in check
         entities: {
           ...ets,
-          // TODO: top priority to test this case of the reducer
           // this should make old highlighted shape not highlighted
           ...(hilyted && hilyted in ets
             ? { [hilyted]: { ...ets[hilyted], isHighlighted: false } }
@@ -142,31 +141,30 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
         },
         selected: newSelected,
         // dont highlight deselected shape during multi-drag
-        highlighted: newSelected.length > 0 ? "" : action.payload.id,
-      };
-    case "DESELECT_ALL":
+        highlighted: newSelected.length > 0 ? '' : action.payload.id,
+      }
+    case 'DESELECT_ALL':
       return {
         ...state,
         selected: [],
         entities: state.selected.reduce<Record<string, Shape>>((shapes, id) => {
-          const s = shapes[id];
-          if (!s) return shapes;
+          const s = shapes[id]
+          if (!s) return shapes
 
           return {
             ...shapes,
             [id]: { ...s, isSelected: false },
-          };
+          }
         }, state.entities),
-      };
-    case "HIGHLIGHT":
-      const { highlighted, entities: ents } = state;
+      }
+    case 'HIGHLIGHT':
+      const { highlighted, entities: ents } = state
 
       return {
         ...state,
         //@ts-expect-error dynamic key will be there (maybe? needs test) because of in check
         entities: {
           ...ents,
-          // TODO: top priority to test this case of the reducer
           // this should make old highlighted shape not highlighted
           ...(highlighted && highlighted in ents
             ? { [highlighted]: { ...ents[highlighted], isHighlighted: false } }
@@ -177,10 +175,10 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
           },
         },
         highlighted: action.payload.id,
-      };
-    case "REMOVE_HIGHLIGHT":
-      const hs = state.entities[state.highlighted];
-      if (!hs) return state;
+      }
+    case 'REMOVE_HIGHLIGHT':
+      const hs = state.entities[state.highlighted]
+      if (!hs) return state
       return {
         ...state,
         entities: {
@@ -190,10 +188,10 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
             isHighlighted: false,
           },
         },
-        highlighted: "",
-      };
-    case "MOVE":
-      const { point, shape } = action.payload;
+        highlighted: '',
+      }
+    case 'MOVE':
+      const { point, shape } = action.payload
 
       return {
         ...state,
@@ -205,56 +203,55 @@ export const reducer = (state: RootState, action: RootAction): RootState => {
               x: point.x,
               y: point.y,
             },
-            // TODO: figure out double highlight happens on move without this line.
             // there is nothing obvious that mutates the shape before dispatching move action
             // only point should be different
             isHighlighted: shape.id == state.highlighted,
           },
         },
-      };
-    case "DELETE":
+      }
+    case 'DELETE':
       // eslint-disable-next-line  @typescript-eslint/no-unused-vars
-      const { [action.payload.id]: removed, ...kept } = state.entities;
+      const { [action.payload.id]: removed, ...kept } = state.entities
 
       return {
         ids: state.ids.filter((s) => s !== action.payload.id),
         entities: kept,
         selected: state.selected.filter((s) => s !== action.payload.id),
         highlighted:
-          state.highlighted == action.payload.id ? "" : state.highlighted,
-      };
-    case "UPDATE":
+          state.highlighted == action.payload.id ? '' : state.highlighted,
+      }
+    case 'UPDATE':
       return {
         ...state,
         entities: {
           ...state.entities,
           [action.payload.id]: action.payload,
         },
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
 export const initialState: RootState = {
   entities: {},
   ids: [],
   selected: [],
-  highlighted: "",
-};
+  highlighted: '',
+}
 
 const makeShapeSelector =
-  (key: "ids" | "selected") =>
+  (key: 'ids' | 'selected') =>
   (state: RootState): Shape[] => {
-    const shapes: Shape[] = [];
+    const shapes: Shape[] = []
 
     for (const id of state[key]) {
-      const s = state.entities[id];
-      if (s) shapes.push(s);
+      const s = state.entities[id]
+      if (s) shapes.push(s)
     }
 
-    return shapes;
-  };
+    return shapes
+  }
 
-export const getShapes = makeShapeSelector("ids");
-export const getSelectedShapes = makeShapeSelector("selected");
+export const getShapes = makeShapeSelector('ids')
+export const getSelectedShapes = makeShapeSelector('selected')
